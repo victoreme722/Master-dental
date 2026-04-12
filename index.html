@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anestesia Máster: Especialista</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+        body { font-family: 'Poppins', sans-serif; background: #0f172a; color: white; overflow: hidden; }
+        .correct { border-color: #22c55e !important; background-color: rgba(34, 197, 94, 0.2) !important; scale: 1.02; }
+        .incorrect { border-color: #ef4444 !important; background-color: rgba(239, 68, 68, 0.2) !important; }
+        .btn-choice { transition: all 0.2s ease; }
+    </style>
+</head>
+<body>
+    <div id="game-container" class="min-h-screen flex flex-col items-center justify-center p-4"></div>
+
+    <script>
+        const megaBank = {
+            basico: [
+                { q: "¿Cuál es el mecanismo de acción de los anestésicos locales?", opts: ["Bloqueo de canales de Calcio", "Bloqueo de canales de Sodio", "Aumento de Potasio", "Inhibición de la bomba sodio-potasio"], a: 1 },
+                { q: "¿Qué estructura del anestésico determina si es Amida o Éster?", opts: ["La cadena intermedia", "El grupo aromático", "El grupo amino", "El radical libre"], a: 0 },
+                { q: "¿Qué componente del cartucho prolonga la duración del efecto?", opts: ["Bisulfito de sodio", "Epinefrina", "Cloruro de sodio", "Metilparabeno"], a: 1 },
+                { q: "¿Cuál es el primer signo de la pérdida de conducción nerviosa?", opts: ["Pérdida de tacto", "Pérdida de temperatura", "Pérdida de dolor", "Pérdida de motricidad"], a: 2 },
+                { q: "¿Qué calibre de aguja tiene el diámetro interno más grande?", opts: ["25G", "27G", "30G", "32G"], a: 0 },
+                { q: "¿En qué estado debe estar el canal de sodio para ser bloqueado?", opts: ["Cerrado", "Abierto o Inactivo", "Reposo", "Hiperpolarizado"], a: 1 },
+                { q: "¿Cuál es la función del Bisulfito de Sodio en el cartucho?", opts: ["Anestesiar", "Antioxidante del vasoconstrictor", "Ajustar el pH", "Solución isotónica"], a: 1 },
+                { q: "¿Qué significa una aspiración positiva?", opts: ["Aguja en hueso", "Aguja en un vaso sanguíneo", "Aguja en el nervio", "Aguja en músculo"], a: 1 },
+                { q: "¿Cuál es la vía principal de excreción de las amidas?", opts: ["Pulmonar", "Hepática", "Renal", "Biliar"], a: 2 },
+                { q: "¿Qué característica física determina el inicio de acción (latencia)?", opts: ["pKa", "Liposolubilidad", "Unión a proteínas", "Peso molecular"], a: 0 },
+                { q: "¿Cuál es el volumen estándar de un cartucho anestésico?", opts: ["1.0 ml", "1.8 ml", "2.2 ml", "0.5 ml"], a: 1 },
+                { q: "¿Qué anestésico tiene alta liposolubilidad y potencia?", opts: ["Lidocaína", "Bupivacaína", "Mepivacaína", "Procaína"], a: 1 },
+                { q: "¿En qué tejido la anestesia se absorbe más rápido?", opts: ["Músculo", "Mucosa inflamada", "Hueso denso", "Grasa"], a: 1 },
+                { q: "¿Cuál es el pH de una solución con vasoconstrictor?", opts: ["7.4", "4.5 - 5.5", "2.0", "9.0"], a: 1 },
+                { q: "¿Qué parte de la jeringa permite realizar la aspiración?", opts: ["Bisel", "Arpón", "Adaptador", "Eje"], a: 1 },
+                { q: "¿Complicación local más común post-inyección?", opts: ["Parálisis facial", "Hematoma", "Trismo", "Infección"], a: 1 },
+                { q: "¿Qué tipo de fibras nerviosas transmiten el dolor?", opts: ["Fibras A-beta", "Fibras A-delta y C", "Fibras B", "Fibras A-alpha"], a: 1 },
+                { q: "¿Qué sucede al inyectar en área con pH ácido (infección)?", opts: ["Efecto inmediato", "Fracaso de la anestesia", "Aumento de potencia", "No cambia"], a: 1 },
+                { q: "¿Qué anestésico no contiene un grupo amida puro?", opts: ["Articaína", "Lidocaína", "Prilocaína", "Mepivacaína"], a: 0 },
+                { q: "¿Cuál es el vasoconstrictor más utilizado?", opts: ["Felipresina", "Epinefrina", "Levonordefrina", "Norepinefrina"], a: 1 }
+            ],
+            intermedio: [
+                { q: "¿Qué nervio anestesia los 2/3 anteriores de la lengua?", opts: ["Glosofaríngeo", "Lingual", "Hipogloso", "Vago"], a: 1 },
+                { q: "¿Dosis máx. Lidocaína 2% con epi (mg/kg)?", opts: ["4.4 mg/kg", "7.0 mg/kg", "2.0 mg/kg", "9.0 mg/kg"], a: 1 },
+                { q: "¿Referencia para el bloqueo del Alveolar Inferior?", opts: ["Fosa canina", "Triángulo pterigomandibular", "Agujero mentoniano", "Rafe medio"], a: 1 },
+                { q: "¿Qué nervio atraviesa el foramen redondo mayor?", opts: ["V1 (Oftálmico)", "V2 (Maxilar)", "V3 (Mandibular)", "VII (Facial)"], a: 1 },
+                { q: "¿Metabolismo principal de la Prilocaína?", opts: ["Hígado y pulmones", "Solo riñón", "Plasma", "Corazón"], a: 0 },
+                { q: "¿Complicación por sobredosis de Prilocaína?", opts: ["Sabor metálico", "Metahemoglobinemia", "Hipotensión", "Taquicardia"], a: 1 },
+                { q: "¿Qué nervio se bloquea en el agujero palatino mayor?", opts: ["Nasopalatino", "Palatino Mayor", "Palatino Menor", "Maxilar"], a: 1 },
+                { q: "¿Concentración de epi 1:100,000 en mg/cartucho?", opts: ["0.018 mg", "0.18 mg", "1.8 mg", "0.5 mg"], a: 0 },
+                { q: "¿Qué nervio da sensibilidad al labio inferior?", opts: ["Bucal", "Mentoniano", "Incisivo", "Lingual"], a: 1 },
+                { q: "¿Causa del trismo post-inyección?", opts: ["Inyección en nervio", "Trauma en m. pterigoideo", "Aspiración", "Frío"], a: 1 },
+                { q: "¿Técnica que bloquea el V3 completo?", opts: ["Técnica de Spix", "Técnica de Gow-Gates", "Infiltrativa", "Intraligamentosa"], a: 1 },
+                { q: "¿Contraindicación principal de Felipresina?", opts: ["Hipertensos", "Embarazadas", "Diabéticos", "Niños"], a: 1 },
+                { q: "¿Qué anestésico tiene mayor unión a proteínas?", opts: ["Lidocaína", "Bupivacaína", "Mepivacaína", "Procaína"], a: 1 },
+                { q: "¿Nervio de mucosa palatina anterior?", opts: ["Palatino Mayor", "Nasopalatino", "Alveolar Superior", "Bucal"], a: 1 },
+                { q: "¿Síntoma inicial de toxicidad sistémica?", opts: ["Paro respiratorio", "Excitación SNC / Mareo", "Coma", "Hipotensión"], a: 1 },
+                { q: "¿Aguja preferible para técnicas tronculares?", opts: ["30G Corta", "27G o 25G Larga", "32G Extra corta", "27G Corta"], a: 1 },
+                { q: "¿Nervio bloqueado en técnica infraorbitaria?", opts: ["PSA", "ASA y MSA", "Palatino", "Bucal"], a: 1 },
+                { q: "¿Periodo de latencia de la Articaína?", opts: ["10 min", "1 - 3 min", "15 min", "5 min"], a: 1 },
+                { q: "¿Tratamiento de hematoma por inyección?", opts: ["Presión y hielo", "Calor", "Incisión", "Antibióticos"], a: 0 },
+                { q: "¿Qué técnica anestesia el maxilar superior?", opts: ["Supraperióstica", "Spix", "Akinosi", "Gow-Gates"], a: 0 }
+            ],
+            avanzado: [
+                { q: "¿Qué receptor adrenérgico causa vasoconstricción periférica?", opts: ["Beta-1", "Alfa-1", "Beta-2", "Dopaminérgico"], a: 1 },
+                { q: "¿Cuál es el pKa de la Mepivacaína?", opts: ["8.1", "7.6", "7.9", "8.2"], a: 1 },
+                { q: "¿Qué propiedad determina la duración de la anestesia?", opts: ["pKa", "Unión a proteínas", "Liposolubilidad", "Peso molecular"], a: 1 },
+                { q: "¿Estado del anestésico para atravesar la membrana?", opts: ["Ionizada", "Base libre (no ionizada)", "Unido a proteína", "Cristalizada"], a: 1 },
+                { q: "¿Qué técnica se realiza con la boca cerrada?", opts: ["Gow-Gates", "Vazirani-Akinosi", "Técnica de Spix", "Infiltrativa"], a: 1 },
+                { q: "¿Enzima que degrada anestésicos tipo Éster?", opts: ["Lipasa hepática", "Pseudocolinesterasa plasmática", "Amilasa", "Creatinina"], a: 1 },
+                { q: "¿Dosis máx. Epi en paciente cardiópata?", opts: ["0.2 mg", "0.04 mg", "0.1 mg", "0.5 mg"], a: 1 },
+                { q: "¿Fibra nerviosa última en ser bloqueada?", opts: ["Fibras C", "Fibras A-alpha (motoras)", "Fibras B", "Fibras A-delta"], a: 1 },
+                { q: "¿Causa química de parestesia?", opts: ["Aguja doblada", "Contaminación con alcohol", "Presión aire", "Bisel romo"], a: 1 },
+                { q: "¿Qué bloqueo causa parálisis del nervio Facial?", opts: ["Mentoniano", "Inyección en parótida", "Palatino", "Infraorbitario"], a: 1 },
+                { q: "¿Anestésico con riesgo de parestesia al 4%?", opts: ["Lidocaína", "Articaína", "Bupivacaína", "Mepivacaína"], a: 1 },
+                { q: "¿Nervio bloqueado en fosa infratemporal?", opts: ["Mentoniano", "PSA", "Incisivo", "Bucal"], a: 1 },
+                { q: "¿'Sabor metálico' previo a convulsión?", opts: ["Alergia", "Toxicidad intravascular", "Miedo", "Hipotensión"], a: 1 },
+                { q: "¿Técnica para anestesiar paladar blando?", opts: ["Palatino Mayor", "Palatino Menor", "Nasopalatino", "Spix"], a: 1 },
+                { q: "¿Umbral convulsivo Lidocaína en sangre?", opts: ["1-2 ug/ml", "7.5-10 ug/ml", "0.5 ug/ml", "20 ug/ml"], a: 1 },
+                { q: "¿Referencia principal para Gow-Gates?", opts: ["Úvula", "Cuello del cóndilo", "Comisura labial", "Escotadura"], a: 1 },
+                { q: "¿Principal metabolito de la Procaína?", opts: ["CO2", "PABA", "Glucosa", "Agua"], a: 1 },
+                { q: "¿Efecto de receptor Beta-2 activado?", opts: ["Vasoconstricción", "Vasodilatación bronquial", "Bradicardia", "Menos glucosa"], a: 1 },
+                { q: "¿Técnica en agujero mentoniano?", opts: ["Bloqueo N. Incisivo", "Spix", "Akinosi", "Gow-Gates"], a: 0 },
+                { q: "¿Vida media de la Articaína?", opts: ["90 min", "27 min", "5 h", "10 min"], a: 1 }
+            ],
+            master: [
+                { q: "¿Qué bloqueo produce diplopía?", opts: ["Palatino", "Bloqueo Maxilar (V2)", "Mentoniano", "Bucal"], a: 1 },
+                { q: "¿Nervio accesorio de molares inferiores?", opts: ["Facial", "Milohioideo", "Hipogloso", "Glosofaríngeo"], a: 1 },
+                { q: "¿Tratamiento de rescate para LAST?", opts: ["Adrenalina IV", "Emulsión de lípidos 20%", "Suero", "Glucosa"], a: 1 },
+                { q: "¿Efecto de Síndrome de Horner?", opts: ["Taquicardia", "Ptosis, miosis, anhidrosis", "Midriasis", "Fiebre"], a: 1 },
+                { q: "¿Unión proteínas y toxicidad?", opts: ["Más unión, más tóxico", "Más unión, menos tóxico", "No afecta", "Sube absorción"], a: 1 },
+                { q: "¿Anestésico con anillo tiofeno?", opts: ["Lidocaína", "Articaína", "Bupivacaína", "Prilocaína"], a: 1 },
+                { q: "¿Qué es taquifilaxia?", opts: ["Más potencia", "Tolerancia rápida", "Alergia súbita", "Paro"], a: 1 },
+                { q: "¿Cuál es el pKa de la Bupivacaína?", opts: ["7.7", "8.1", "7.9", "8.4"], a: 1 },
+                { q: "¿Fibra nerviosa más sensible al bloqueo?", opts: ["Tipo A-alpha", "Tipo B (pequeña mielínica)", "Tipo C", "Tipo A-delta"], a: 1 },
+                { q: "¿Causa de muerte por sobredosis?", opts: ["Falla renal", "Depresión resp/colapso CV", "Alergia", "Hemorragia"], a: 1 },
+                { q: "¿Complicación pupilar en infraorbitaria?", opts: ["Miosis", "Midriasis transitoria", "Ceguera", "Uveítis"], a: 1 },
+                { q: "¿Liposolubilidad y potencia?", opts: ["Inversamente prop.", "Directamente prop.", "No relación", "Solo duración"], a: 1 },
+                { q: "¿Bloqueo que toca cuello del cóndilo?", opts: ["Spix", "Gow-Gates", "Akinosi", "Mentoniano"], a: 1 },
+                { q: "¿Metabolito Lidocaína convulsivante?", opts: ["PABA", "MEGX", "Ácido acético", "Urea"], a: 1 },
+                { q: "¿Anestésico isómero puro (S)?", opts: ["Lidocaína", "Levobupivacaína", "Articaína", "Prilocaína"], a: 1 },
+                { q: "¿Bloqueo accidental de ganglio estrellado causa?", opts: ["Sordera", "Síndrome de Horner", "Parálisis lingual", "Tos"], a: 1 },
+                { q: "¿Receptor cardíaco Inotropismo+?", opts: ["Alfa-1", "Beta-1", "Beta-2", "Muscarínico"], a: 1 },
+                { q: "¿pH crítico de ineficacia?", opts: ["7.0", "Menor a 6.0", "8.0", "7.4"], a: 1 },
+                { q: "¿Bloqueo en escotadura sigmoidea?", opts: ["Spix", "Vazirani-Akinosi", "Gow-Gates", "PSA"], a: 1 },
+                { q: "¿Metabolismo plasmático y hepático?", opts: ["Lidocaína", "Articaína", "Mepivacaína", "Bupivacaína"], a: 1 }
+            ]
+        };
+
+        let state = { view: 'menu', level: '', lives: 3, currentIdx: 0, score: 0, questions: [], selected: null, feedback: false };
+
+        function shuffleQuestions(level) {
+            const bank = megaBank[level] || megaBank['basico'];
+            return [...bank].sort(() => Math.random() - 0.5).slice(0, 20);
+        }
+
+        function render() {
+            const container = document.getElementById('game-container');
+            container.innerHTML = '';
+
+            if (state.view === 'menu') {
+                container.innerHTML = `
+                    <h1 class="text-4xl font-black mb-12 text-blue-400 text-center uppercase tracking-tighter">Anestesia Máster</h1>
+                    <div class="grid gap-4 w-full max-w-xs">
+                        ${['basico', 'intermedio', 'avanzado', 'master'].map(l => `
+                            <button onclick="setupGame('${l}')" class="p-5 rounded-xl bg-slate-800 border border-slate-700 hover:border-blue-500 font-bold uppercase tracking-widest transition-all">
+                                Nivel ${l}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+            } else if (state.view === 'playing') {
+                const q = state.questions[state.currentIdx];
+                container.innerHTML = `
+                    <div class="w-full max-w-md animate-in fade-in duration-300">
+                        <div class="flex justify-between items-center mb-6 px-2">
+                            <button onclick="state.view='menu'; render()" class="text-[10px] font-black text-slate-400 bg-slate-800/50 px-3 py-1 rounded-full uppercase tracking-tighter">← Inicio</button>
+                            <div class="flex gap-1">${Array(3).fill(0).map((_, i) => `<span class="text-xl">${i < state.lives ? '❤️' : '🖤'}</span>`).join('')}</div>
+                        </div>
+                        <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 shadow-2xl">
+                            <div class="w-full bg-slate-800 h-1 mb-8 rounded-full overflow-hidden">
+                                <div class="bg-blue-500 h-full transition-all duration-500" style="width: ${(state.currentIdx + 1) * 5}%"></div>
+                            </div>
+                            <h2 class="text-lg font-bold mb-8 leading-tight min-h-[60px]">${q.q}</h2>
+                            <div class="grid gap-3">
+                                ${q.opts.map((opt, i) => {
+                                    let cls = "border-slate-700 hover:bg-slate-800";
+                                    if (state.feedback) {
+                                        if (i === q.a) cls = "correct";
+                                        else if (i === state.selected) cls = "incorrect";
+                                    }
+                                    return `<button onclick="handleAnswer(${i})" class="btn-choice p-4 rounded-xl text-left border-2 text-sm font-medium ${cls}">${opt}</button>`;
+                                }).join('')}
+                            </div>
+                            ${state.feedback ? `<button onclick="next()" class="w-full mt-8 py-4 bg-blue-600 rounded-xl font-bold uppercase text-xs tracking-widest">Siguiente</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            } else {
+                const win = state.view === 'complete';
+                container.innerHTML = `
+                    <div class="text-center animate-in zoom-in duration-300">
+                        <div class="text-7xl mb-6">${win ? '🏆' : '💉'}</div>
+                        <h2 class="text-3xl font-black uppercase mb-2">${win ? '¡Dominio Total!' : 'Manejo Fallido'}</h2>
+                        <p class="text-slate-400 mb-10 text-sm uppercase tracking-widest">Puntaje Final: ${state.score} / 20</p>
+                        <button onclick="state.view='menu'; render()" class="px-12 py-4 bg-white text-black rounded-full font-black uppercase text-[10px]">Menú Principal</button>
+                    </div>
+                `;
+            }
+        }
+
+        window.setupGame = (level) => {
+            state.questions = shuffleQuestions(level);
+            state.level = level;
+            state.view = 'playing';
+            state.lives = 3;
+            state.score = 0;
+            state.currentIdx = 0;
+            state.feedback = false;
+            render();
+        };
+
+        window.handleAnswer = (i) => {
+            if (state.feedback) return;
+            state.selected = i;
+            state.feedback = true;
+            if (i === state.questions[state.currentIdx].a) {
+                state.score++;
+            } else {
+                state.lives--;
+            }
+            render();
+        };
+
+        window.next = () => {
+            if (state.lives <= 0) {
+                state.view = 'over';
+            } else if (state.currentIdx >= 19) {
+                state.view = 'complete';
+            } else {
+                state.currentIdx++;
+                state.feedback = false;
+                state.selected = null;
+            }
+            render();
+        };
+
+        render();
+    </script>
+</body>
+</html> 
