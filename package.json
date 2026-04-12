@@ -1,0 +1,14 @@
+{
+  "name": "mi-juego-mobile",
+  "version": "1.0.0",
+  "description": "Juego creado desde mi smartphone",
+  "main": "index.html",
+  "scripts": {
+    "build": "mkdir -p www && cp index.html www/ && cp -r assets www/ 2>/dev/null || true"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^5.0.0",
+    "@capacitor/core": "^5.0.0",
+    "@capacitor/android": "^5.0.0"
+  }
+}
